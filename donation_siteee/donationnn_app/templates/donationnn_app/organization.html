@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ organization.name }} - Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Add your existing styles here */
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fas fa-hands-helping"></i>
+            Helping Hand
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'donate' %}">Donate</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="org-header">
+            <h1 class="org-title">
+                <i class="fas fa-building"></i>
+                {{ organization.name }}
+            </h1>
+            <div class="org-info">
+                <div class="info-card">
+                    <i class="fas fa-map-marker-alt info-icon"></i>
+                    <div>
+                        <h3>Location</h3>
+                        <p>{{ organization.location }}</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-tag info-icon"></i>
+                    <div>
+                        <h3>Category</h3>
+                        <p>{{ organization.category }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Add Item Form (Visible only to org_rep) -->
+        {% if request.user.role == 'org_rep' %}
+        <div class="add-item-form">
+            <h2><i class="fas fa-plus"></i> Add New Item</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" name="add_item" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Item
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Donation Form (Visible to donors) -->
+        {% if request.user.role == 'donor' %}
+        <div class="donation-form">
+            <h2><i class="fas fa-gift"></i> Donate Now</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ donation_form.as_p }}
+                <button type="submit" name="donate" class="btn btn-primary">
+                    <i class="fas fa-hand-holding-heart"></i> Donate
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Category Search Form -->
+        <div class="search-form">
+            <h2><i class="fas fa-search"></i> Search Items by Category</h2>
+            <form method="get" action="{% url 'organization_detail' org_id=organization.id %}">
+                <label for="category">Select Category:</label>
+                <select name="category" id="category">
+                    <option value="">All Categories</option>
+                    <option value="household_essentials" {% if category == "household_essentials" %}selected{% endif %}>Household Essentials</option>
+                    <option value="clothing" {% if category == "clothing" %}selected{% endif %}>Clothing</option>
+                    <option value="footwear" {% if category == "footwear" %}selected{% endif %}>Footwear</option>
+                    <option value="grains" {% if category == "grains" %}selected{% endif %}>Grains</option>
+                    <option value="pulses" {% if category == "pulses" %}selected{% endif %}>Pulses</option>
+                    <option value="mobility_aids" {% if category == "mobility_aids" %}selected{% endif %}>Mobility Aids</option>
+                    <option value="educational_supplies" {% if category == "educational_supplies" %}selected{% endif %}>Educational Supplies</option>
+                </select>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+
+        <!-- List of Needed Items -->
+        <div class="needed-items">
+            <h2><i class="fas fa-box-open"></i> Needed Items</h2>
+            <ul class="items-list">
+                {% for item in items %}
+                <li class="item-card">
+                    <i class="fas fa-gift item-icon"></i>
+                    <div>
+                        <h3>{{ item.item_name }}</h3>
+                        <p>{{ item.description }}</p>
+                        <small>Quantity needed: {{ item.quantity_needed }}</small>
+                        {% if item.item_picture %}
+                            <img src="{{ item.item_picture.url }}" alt="{{ item.item_name }}" width="200">
+                        {% endif %}
+                        <!-- Update and Delete Buttons (Visible only to org_rep) -->
+                        {% if request.user.role == 'org_rep' %}
+                        <div class="item-actions">
+                            <a href="{% url 'update_item' item.id %}" class="btn btn-secondary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a href="{% url 'donate' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Donate
+        </a>
+    </div>
+</body>
+</html>
