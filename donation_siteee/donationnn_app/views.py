@@ -370,3 +370,11 @@ def delete_organization(request, organization_id):
     organization.delete()
     messages.success(request, 'Organization deleted successfully!')
     return redirect('dashboard')
+
+from django.contrib.auth import authenticate, login, logout
+from django.views import View
+class UserLogoutView(View):
+    def get(self,request):
+        logout(request)
+        messages.success(request,"Logout Success")
+        return redirect('login')

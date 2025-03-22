@@ -21,7 +21,7 @@ class Organization(models.Model):
     category = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.org_name
 
 # donationnn_app/models.py
 from django.db import models
@@ -45,7 +45,7 @@ class Item(models.Model):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name='items')
 
     def __str__(self):
-        return self.name
+        return self.item_name
 
 class Donation(models.Model):
     donor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
