@@ -133,4 +133,4 @@ EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'helpinghandonation@gmail.com'  # Replace with your email address
-EMAIL_HOST_PASSWORD = 'zdglxtciceadczbw'  # Replace with your email password
+EMAIL_HOST_PASSWORD = ''  # Replace with your email password
